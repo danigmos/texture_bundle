@@ -1,6 +1,7 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 from core.file_scanner import scan_exr_files
 from ui.style import load_stylesheet
+from core.metadata_writer import insert_color_space_metadata
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
@@ -17,6 +18,7 @@ class MainWindow(QtWidgets.QWidget):
         self.label = QtWidgets.QLabel("Path")
         self.filepath = QtWidgets.QLineEdit()
         self.button_select = QtWidgets.QPushButton("Select folder")
+        self.button_metadata = QtWidgets.QPushButton("Insert Metadata")
 
         self.table = QtWidgets.QTableWidget(0,5)
         self.table.setHorizontalHeaderLabels(["Name", "Path", "Type", "Color Space", "State"])
@@ -31,12 +33,18 @@ class MainWindow(QtWidgets.QWidget):
         table_layout = QtWidgets.QHBoxLayout()
         table_layout.addWidget(self.table)
 
+        metadata_layout = QtWidgets.QHBoxLayout()
+        metadata_layout.addStretch()
+        metadata_layout.addWidget(self.button_metadata)
+
         main_layout = QtWidgets.QVBoxLayout(self)
         main_layout.addLayout(file_path_layout)
         main_layout.addLayout(table_layout)
+        main_layout.addLayout(metadata_layout)
 
     def create_connections(self):
         self.button_select.clicked.connect(self.select_folder)
+        self.button_metadata.clicked.connect(self.insert_metadata)
 
     def select_folder(self):
         folder_path = QtWidgets.QFileDialog.getExistingDirectory(self, "Select folder")
@@ -56,5 +64,17 @@ class MainWindow(QtWidgets.QWidget):
             self.table.setItem(i, 3, QtWidgets.QTableWidgetItem(item["color_space"]))
             self.table.setItem(i, 4, QtWidgets.QTableWidgetItem(item["status"]))
 
+    def insert_metadata(self):
+        row_count = self.table.rowCount()
+        for i in range(row_count):
+            path = self.table.item(i, 1).text()
+            color_space = self.table.item(i, 3).text()
 
+            output_path = insert_color_space_metadata(path, color_space)
 
+            if output_path:
+                status_item = QtWidgets.QTableWidgetItem(f"Saved in /with_metadata/")
+            else:
+                status_item = QtWidgets.QTableWidgetItem("Error")
+
+            self.table.setItem(i,4, status_item)
