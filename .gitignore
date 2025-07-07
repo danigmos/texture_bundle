@@ -1,0 +1,14 @@
+# Venv
+.venv/
+__pycache__/
+*.pyc
+
+# PyCharm
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Temps
+*.temp
