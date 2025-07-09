@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import QApplication, QLabel
-from PySide6.QtWidgets import QWidget
 import sys
 from ui.main_window import MainWindow
 
