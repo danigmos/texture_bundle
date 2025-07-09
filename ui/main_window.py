@@ -3,6 +3,7 @@ from core.file_scanner import scan_exr_files
 from ui.style import load_stylesheet
 from core.metadata_writer import insert_color_space_metadata
 
+
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
